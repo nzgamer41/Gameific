@@ -1,0 +1,17 @@
+﻿<Window x:Class="LANGameManager.InstallMenu"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LANGameManager"
+        mc:Ignorable="d"
+        Title="InstallMenu" MinHeight="600" MinWidth="500" MaxHeight="600" MaxWidth="500"  Height="600" Width="500" Loaded="Window_Loaded">
+    <Grid>
+        <ListBox x:Name="listBoxDl" HorizontalAlignment="Left" Height="367" Margin="10,10,0,0" VerticalAlignment="Top" Width="472"/>
+        <Button Content="Install" HorizontalAlignment="Left" Margin="267,516,0,0" VerticalAlignment="Top" Width="188" Height="43" Click="Button_Click"/>
+        <Button Content="Cancel" HorizontalAlignment="Left" Margin="30,516,0,0" VerticalAlignment="Top" Width="188" Height="43" Click="Button_Click_1"/>
+        <TextBlock x:Name="textBlockConsole" HorizontalAlignment="Left" Margin="10,382,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Background="#FFDCDADA" Height="100" Width="472" FontSize="14"/>
+        <ProgressBar x:Name="progressBar" HorizontalAlignment="Left" Height="10" Margin="10,487,0,0" VerticalAlignment="Top" Width="472"/>
+
+    </Grid>
+</Window>
