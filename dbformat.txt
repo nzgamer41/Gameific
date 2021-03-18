@@ -1,0 +1,15 @@
+user table
+- username
+- hashed and salted pw
+- last token
+- expiry
+- uid
+- account type
+
+account types:
+0: disabled (fail login)
+1: user
+2: developer
+3: administrator
+
+gameificserver:iRgBDEfVbTDI4ocs
