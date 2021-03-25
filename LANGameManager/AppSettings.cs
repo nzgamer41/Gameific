@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LANGameManager
+namespace GameificClient
 {
     [Serializable]
     public class AppSettings

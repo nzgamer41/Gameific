@@ -18,7 +18,7 @@ using System.Windows.Media.Imaging;
 
 
 
-namespace LANGameManager
+namespace GameificClient
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -29,10 +29,20 @@ namespace LANGameManager
         {
             InitializeComponent();
 
-            gameListBox.Items.Add("Game 1");
+            Game game1 = new Game();
+            game1._gameName = "Game 1";
+            game1._gameLocation = "C:\\Windows\\System32";
+
+            gameListBox.Items.Add(game1);
             gameListBox.Items.Add("Game 2");
             gameListBox.Items.Add("Game 3");
 
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            ConfigWindow cw = new ConfigWindow((Game)gameListBox.SelectedItem);
+            cw.ShowDialog();
         }
     }
 }

@@ -8,11 +8,11 @@ using System.Windows.Markup;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("LANGameManager")]
+[assembly: AssemblyTitle("GameificClient")]
 [assembly: AssemblyDescription("best game launcher")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("nzgamer41 enterprises")]
-[assembly: AssemblyProduct("LANGameManager")]
+[assembly: AssemblyProduct("GameificClient")]
 [assembly: AssemblyCopyright("Copyright © nzgamer41 industries 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
