@@ -8,7 +8,7 @@ using MySql.Data.MySqlClient;
 
 
 
-namespace GameificServer
+namespace LGMServer
 {
     public class DBConnection
     {

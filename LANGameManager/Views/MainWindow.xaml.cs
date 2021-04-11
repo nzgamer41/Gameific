@@ -25,7 +25,8 @@ namespace GameificClient
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        private User _loggedIn;
+        public MainWindow(User loggedInUser)
         {
             InitializeComponent();
 
@@ -36,6 +37,8 @@ namespace GameificClient
             gameListBox.Items.Add(game1);
             gameListBox.Items.Add("Game 2");
             gameListBox.Items.Add("Game 3");
+            _loggedIn = loggedInUser;
+            this.Title += " logged in as " + _loggedIn._username;
 
         }
 

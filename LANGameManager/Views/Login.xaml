@@ -24,9 +24,9 @@
             <ColumnDefinition Width="33*"/>
         </Grid.ColumnDefinitions>
         <Label Content="Username:" Grid.Column="1" HorizontalAlignment="Left" Width="66" Margin="0,49,0,0" Grid.RowSpan="2"/>
-        <TextBox Grid.Column="1" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" Width="228" Margin="0,28,0,0" Grid.RowSpan="2"/>
+        <TextBox x:Name="textBoxUser" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" Width="228" Margin="0,28,0,0" Grid.RowSpan="2"/>
         <Label Content="Password:" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="3" Width="62" Margin="0,1,0,0"/>
-        <PasswordBox Grid.Column="1" HorizontalAlignment="Left" Grid.Row="4" Width="228" Margin="0,1,0,0"/>
+        <PasswordBox x:Name="passwordBox" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="4" Width="228" Margin="0,1,0,0"/>
         <Button Content="Login" HorizontalAlignment="Left" Margin="0,16,0,15" Grid.Row="5" Width="228" Grid.Column="1" Height="Auto" Click="Button_Click"/>
         <Button Content="Cancel" Grid.Column="1" HorizontalAlignment="Left" Margin="0,12,0,12" Grid.Row="6" Width="228" Height="Auto" IsCancel="True" Click="Button_Click_1"/>
         <Button Content="Register" Grid.Column="1" HorizontalAlignment="Left" Margin="0,9,0,9" Grid.Row="7" Width="228" Height="Auto" IsEnabled="False"/>

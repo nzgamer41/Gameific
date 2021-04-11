@@ -42,6 +42,8 @@ namespace GameificClient
         /// <returns></returns>
         public static User logOn(string username, string pw, string serverIP)
         {
+            //TODO: Proper hashing and salting
+            /*
             //security commands FIRST
             byte[] salt1 = Encoding.ASCII.GetBytes("VOMVF2YR5FTORZZOGD0Y");
             Rfc2898DeriveBytes k1 = new Rfc2898DeriveBytes(pw, salt1, 1000);
@@ -54,19 +56,23 @@ namespace GameificClient
             enc.Write(data1, 0, data1.Length);
             enc.FlushFinalBlock();
             enc.Close();
-
+            */
             _receiver = new UdpClient();
             IPEndPoint srvEndPoint = new IPEndPoint(IPAddress.Parse(serverIP), _port);
             var data = Encoding.UTF8.GetBytes("GameificClientLogin");
-            byte[] rv = new byte[data.Length + encStream.ToArray().Length];
+            char[] separator = new[] { '|' };
+            byte[] rv = new byte[data.Length + Encoding.UTF8.GetBytes(username).Length + Encoding.UTF8.GetBytes(pw).Length + separator.Length];
             System.Buffer.BlockCopy(data, 0, rv, 0, data.Length);
-            Buffer.BlockCopy(encStream.ToArray(), 0, rv, data.Length, encStream.ToArray().Length);
-            k1.Reset();
-            encStream.Dispose();
+            Buffer.BlockCopy(Encoding.UTF8.GetBytes(username), 0, rv, data.Length, Encoding.UTF8.GetBytes(username).Length);
+            Buffer.BlockCopy(separator, 0, rv, data.Length + username.ToCharArray().Length, separator.Length);
+            Buffer.BlockCopy(Encoding.UTF8.GetBytes(pw).ToArray(), 0, rv, data.Length + username.ToCharArray().Length + separator.Length, Encoding.UTF8.GetBytes(pw).ToArray().Length);
+
+            //k1.Reset();
+            //encStream.Dispose();
             _receiver.Send(rv, rv.Length, srvEndPoint);
 
             var dataGram = _receiver.Receive(ref srvEndPoint);
-            return (User)Helpers.ByteArrayToObject(dataGram);
+            return JsonConvert.DeserializeObject<User>(Encoding.UTF8.GetString(dataGram));
         }
 
         public static bool powerOn(string serverIP)

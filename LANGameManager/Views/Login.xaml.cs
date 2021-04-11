@@ -27,7 +27,7 @@ namespace GameificClient
 #endif
             if (!online)
             {
-                MainWindow mw = new MainWindow();
+                MainWindow mw = new MainWindow(new User());
                 mw.Show();
                 this.Close();
             }
@@ -35,12 +35,24 @@ namespace GameificClient
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                User temp = new User();
+                temp.logon(textBoxUser.Text, passwordBox.Password);
+                MainWindow mw = new MainWindow(temp);
+                mw.Show();
+                this.Close();
 
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            MainWindow mw = new MainWindow();
+            MainWindow mw = new MainWindow(new User());
             mw.Show();
             this.Close();
         }

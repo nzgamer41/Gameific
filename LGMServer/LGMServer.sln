@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30309.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameificServer", "GameificServer\GameificServer.csproj", "{B209C8D6-DD38-442D-867B-B165B62F2B16}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LGMServer", "LGMServer\LGMServer.csproj", "{67445265-D6F9-4B7C-9C12-6214B78FAFD8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B209C8D6-DD38-442D-867B-B165B62F2B16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B209C8D6-DD38-442D-867B-B165B62F2B16}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B209C8D6-DD38-442D-867B-B165B62F2B16}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B209C8D6-DD38-442D-867B-B165B62F2B16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67445265-D6F9-4B7C-9C12-6214B78FAFD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67445265-D6F9-4B7C-9C12-6214B78FAFD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67445265-D6F9-4B7C-9C12-6214B78FAFD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67445265-D6F9-4B7C-9C12-6214B78FAFD8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {36966313-DFDB-4FAD-8813-BBAC22611B5F}
+		SolutionGuid = {95EFAC5D-8E39-4AF0-98F1-CEABA1E76FE4}
 	EndGlobalSection
 EndGlobal
