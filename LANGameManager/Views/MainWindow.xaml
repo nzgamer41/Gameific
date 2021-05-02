@@ -14,13 +14,12 @@
         Title="Gameific Client" MinHeight="620" MinWidth="500" MaxHeight="620" MaxWidth="500"  Height="620" Width="500">
     <Grid>
         <Button x:Name="launchButton" Content="Launch" HorizontalAlignment="Left" Margin="324,186,0,0" VerticalAlignment="Top" Width="158" Height="35" />
-        <Button Content="Configure" HorizontalAlignment="Left" Margin="324,226,0,0" VerticalAlignment="Top" Width="158" Height="35" Click="Button_Click"/>
-        <Button Content="Exit" HorizontalAlignment="Left" Margin="324,528,0,0" VerticalAlignment="Top" Width="158" Height="49" />
-        <ListBox x:Name="gameListBox" HorizontalAlignment="Left" Height="567" Margin="10,10,0,0" VerticalAlignment="Top" Width="309" />
-        <Button x:Name="downloadButton" Content="Download" HorizontalAlignment="Left" Margin="324,266,0,0" VerticalAlignment="Top" Width="158" Height="34"/>
+        <Button x:Name="buttonConfig" Content="Configure" HorizontalAlignment="Left" Margin="324,226,0,0" VerticalAlignment="Top" Width="158" Height="35" Click="Button_Click"/>
+        <Button Content="Exit" HorizontalAlignment="Left" Margin="324,528,0,0" VerticalAlignment="Top" Width="158" Height="49" Click="Button_Click_1" />
+        <ListBox x:Name="gameListBox" HorizontalAlignment="Left" Height="567" Margin="10,10,0,0" VerticalAlignment="Top" Width="309" SelectionChanged="gameListBox_SelectionChanged" />
+        <Button x:Name="downloadButton" Content="Download" HorizontalAlignment="Left" Margin="324,266,0,0" VerticalAlignment="Top" Width="158" Height="34" Click="downloadButton_Click"/>
         <ProgressBar x:Name="progressBar" HorizontalAlignment="Left" Height="15" Margin="324,305,0,0" VerticalAlignment="Top" Width="158"/>
         <TextBlock x:Name="textBlockConsole" HorizontalAlignment="Left" Margin="324,325,0,0" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.633,-1.125" Height="142" Width="158" Background="#FFE0E0E0"/>
-        <Button x:Name="downloadButton_Copy" Content="Stop Music" HorizontalAlignment="Left" Margin="324,472,0,0" VerticalAlignment="Top" Width="158" Height="34" />
         <Image x:Name="imageGame" HorizontalAlignment="Left" Height="162" Margin="324,10,0,0" VerticalAlignment="Top" Width="158"/>
         <!--<Button x:Name="debugButton1" Content="Add games for testing" HorizontalAlignment="Left" Margin="324,350,0,0" VerticalAlignment="Top" Width="158" Height="34" Click="DebugButton1_OnClick"/>-->
     </Grid>

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GameificClient
+namespace LGMConfigW.Classes
 {
     [Serializable]
     public class Game
@@ -13,8 +13,6 @@ namespace GameificClient
         public bool _isInstalled { get; set; }
         public string _gameLocation { get; set; }
         public string _gameArgs { get; set; }
-        public bool _needsSteamEmu { get; set; }
-        public string _steamEmuProfile { get; set; }
         public string _remoteFileName { get; set; }
         public bool _initSetupComplete { get; set; }
         public string relPathToExe { get; set; }

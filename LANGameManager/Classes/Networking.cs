@@ -26,7 +26,7 @@ namespace GameificClient
             _receiver = new UdpClient();
 
             IPEndPoint srvEndPoint = new IPEndPoint(IPAddress.Parse(serverIP), _port);
-            var data = Encoding.UTF8.GetBytes("LGMClientReqGames");
+            var data = Encoding.UTF8.GetBytes("GameificClientReqGames");
             _receiver.Send(data, data.Length, srvEndPoint);
 
             IPEndPoint sentBy = new IPEndPoint(IPAddress.Any, _srvPort);
