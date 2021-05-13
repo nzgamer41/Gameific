@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GameificClient"
         mc:Ignorable="d"
-        Title="ConfigWindow" Height="100" Width="300">
+        Title="ConfigWindow" Height="118" Width="624">
     <Grid>
         <Label Content="Game executable" HorizontalAlignment="Left" Margin="4,10,0,0" VerticalAlignment="Top"/>
-        <TextBlock x:Name="textBlockGamePath" Margin="10,36,0,0" TextWrapping="Wrap" Background="Gray" Text="TextBlock" VerticalAlignment="Top" Height="21" MouseDown="TextBlockGamePath_MouseDown" HorizontalAlignment="Left" Width="272"/>
+        <TextBlock x:Name="textBlockGamePath" Margin="10,36,0,0" TextWrapping="Wrap" Background="Gray" Text="TextBlock" VerticalAlignment="Top" Height="21" MouseDown="TextBlockGamePath_MouseDown" HorizontalAlignment="Left" Width="596"/>
 
     </Grid>
 </Window>

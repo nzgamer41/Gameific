@@ -19,9 +19,9 @@ using System.Windows.Media.Imaging;
 using Application = System.Windows.Application;
 
 using System.Net;
-using OctoTorrent.Client;
-using OctoTorrent.Client.Encryption;
-using OctoTorrent.Common;
+using MonoTorrent.Client;
+using MonoTorrent.Client.Encryption;
+using MonoTorrent;
 
 
 namespace GameificClient
@@ -31,10 +31,10 @@ namespace GameificClient
     /// </summary>
     public partial class MainWindow : Window
     {
-        BanList banlist;
-        ClientEngine engine;
+        ClientEngine Engine { get; set; }
         List<TorrentManager> managers = new List<TorrentManager>();
         private User _loggedIn;
+        private Game dlGame;
         public MainWindow(User loggedInUser)
         {
             InitializeComponent();
@@ -84,52 +84,140 @@ namespace GameificClient
             }
         }
 
-        private void downloadButton_Click(object sender, RoutedEventArgs e)
+        private async void downloadButton_Click(object senderr, RoutedEventArgs ee)
         {
             Game selGame = (Game) gameListBox.SelectedItem;
             Networking.reqTorrent(selGame._remoteFileName, "127.0.0.1");
+            dlGame = selGame;
+            var downloadsPath = Path.Combine(Environment.CurrentDirectory, "Downloads");
 
-            EngineSettings settings = new EngineSettings();
-            settings.AllowedEncryption = ChooseEncryption();
+            // .torrent files will be loaded from this directory (if any exist)
+            var torrentsPath = Path.Combine(Environment.CurrentDirectory, "Games");
 
-            // If both encrypted and unencrypted connections are supported, an encrypted connection will be attempted
-            // first if this is true. Otherwise an unencrypted connection will be attempted first.
-            settings.PreferEncryption = true;
-
-            // Torrents will be downloaded here by default when they are registered with the engine
-            settings.SavePath = ".\\TorrentData";
-
-            // The maximum upload speed is 200 kilobytes per second, or 204,800 bytes per second
-            settings.GlobalMaxUploadSpeed = 200 * 1024;
-
-            engine = new ClientEngine(settings);
-
-            // Tell the engine to listen at port 6969 for incoming connections
-            engine.ChangeListenEndpoint(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 6970));
-
-            // Load a .torrent file into memory
-            Torrent torrent = Torrent.Load(selGame._remoteFileName + ".torrent");
+            // If the torrentsPath does not exist, we want to create it
+            if (!Directory.Exists(torrentsPath))
+                Directory.CreateDirectory(torrentsPath);
 
 
-            TorrentManager manager = new TorrentManager(torrent, "TorrentData", new TorrentSettings());
-            managers.Add(manager);
-            engine.Register(manager);
+            // Give an example of how settings can be modified for the engine.
+            var settingBuilder = new EngineSettingsBuilder
+            {
+                // Allow the engine to automatically forward ports using upnp/nat-pmp (if a compatible router is available)
+                AllowPortForwarding = true,
 
-            // Disable rarest first and randomised picking - only allow priority based picking (i.e. selective downloading)
-            PiecePicker picker = new StandardPicker();
-            picker = new PriorityPicker(picker);
-            manager.ChangePicker(picker);
-            manager.PieceHashed += Manager_PieceHashed;
-            manager.TorrentStateChanged += Manager_TorrentStateChanged;
-            engine.StartAll();
-            
+                // Automatically save a cache of the DHT table when all torrents are stopped.
+                AutoSaveLoadDhtCache = true,
+
+                // Automatically save 'FastResume' data when TorrentManager.StopAsync is invoked, automatically load it
+                // before hash checking the torrent. Fast Resume data will be loaded as part of 'engine.AddAsync' if
+                // torrent metadata is available. Otherwise, if a magnetlink is used to download a torrent, fast resume
+                // data will be loaded after the metadata has been downloaded. 
+                AutoSaveLoadFastResume = true,
+
+                // If a MagnetLink is used to download a torrent, the engine will try to load a copy of the metadata
+                // it's cache directory. Otherwise the metadata will be downloaded and stored in the cache directory
+                // so it can be reloaded later.
+                AutoSaveLoadMagnetLinkMetadata = true,
+
+                // Use a fixed port to accept incoming connections from other peers.
+                ListenPort = 55123,
+
+                // Use a random port for DHT communications.
+                DhtPort = 55123,
+            };
+            Engine = new ClientEngine(settingBuilder.ToSettings());
+
+
+
+
+            var torrent = await Torrent.LoadAsync(selGame._remoteFileName + ".torrent");
+
+            // EngineSettings.AutoSaveLoadFastResume is enabled, so any cached fast resume
+            // data will be implicitly loaded. If fast resume data is found, the 'hash check'
+            // phase of starting a torrent can be skipped.
+            // 
+            // TorrentSettingsBuilder can be used to modify the settings for this
+            // torrent.
+            var managers = await Engine.AddAsync(torrent, downloadsPath);
+            managers.PeersFound += Manager_PeersFound;
+            Console.WriteLine(torrent.InfoHash.ToString());
+
+            foreach (TorrentManager manager in Engine.Torrents)
+            {
+                manager.PeerConnected += (o, e) =>
+                {
+
+                    Console.WriteLine($"Connection succeeded: {e.Peer.Uri}");
+                };
+                manager.ConnectionAttemptFailed += (o, e) =>
+                {
+
+                    Console.WriteLine(
+                        $"Connection failed: {e.Peer.ConnectionUri} - {e.Reason}");
+                };
+                // Every time a piece is hashed, this is fired.
+                manager.PieceHashed += delegate (object o, PieceHashedEventArgs e)
+                {
+                    Console.WriteLine($"Piece Hashed: {e.PieceIndex} - {(e.HashPassed ? "Pass" : "Fail")}");
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        progressBar.Value = e.TorrentManager.Bitfield.PercentComplete;
+                    });
+                };
+
+                // Every time the state changes (Stopped -> Seeding -> Downloading -> Hashing) this is fired
+                manager.TorrentStateChanged += Manager_TorrentStateChanged;
+
+                // Every time the tracker's state changes, this is fired
+                manager.TrackerManager.AnnounceComplete += (sender, e) =>
+                {
+                    Console.WriteLine($"{e.Successful}: {e.Tracker}");
+                };
+
+
+                // Start the torrentmanager. The file will then hash (if required) and begin downloading/seeding.
+                // As EngineSettings.AutoSaveLoadDhtCache is enabled, any cached data will be loaded into the
+                // Dht engine when the first torrent is started, enabling it to bootstrap more rapidly.
+                await manager.StartAsync();
+            }
+
+        }
+
+
+        private void Manager_PeersFound(object sender, PeersAddedEventArgs e)
+        {
+            Console.WriteLine($"Found {e.NewPeers} new peers and {e.ExistingPeers} existing peers");
         }
 
         private void Manager_TorrentStateChanged(object sender, TorrentStateChangedEventArgs e)
         {
             if (e.NewState == TorrentState.Seeding)
             {
-                e.TorrentManager.Stop();
+                e.TorrentManager.StopAsync();
+                this.Dispatcher.Invoke(() =>
+                {
+                    textBlockConsole.Text = "Extracting...";
+                    progressBar.IsIndeterminate = true;
+                });
+                if(zipExtract(Path.Combine(Environment.CurrentDirectory, "Downloads") + "\\" + dlGame._remoteFileName))
+                {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        Game temp = (Game)gameListBox.SelectedItem;
+                        temp = dlGame;
+                        Helpers.WriteToJsonFile("Game.json", (List<Game>)gameListBox.ItemsSource, false);
+                        textBlockConsole.Text = "Complete!";
+                        progressBar.IsIndeterminate = false;
+                        downloadButton.IsEnabled = false;
+                        launchButton.IsEnabled = true;
+                        buttonConfig.IsEnabled = true;
+                    });
+                }
+                else
+                {
+                    textBlockConsole.Text = "Extraction Failed! Please try removing the folder in Games, and clearing Downloads, then re-downloading the title.";
+                    progressBar.IsIndeterminate = false;
+                }
                 //extract
             }
             else if (e.NewState == TorrentState.Downloading)
@@ -155,24 +243,30 @@ namespace GameificClient
 
         }
 
-        EncryptionTypes ChooseEncryption()
+        private bool zipExtract(string zip)
         {
-            EncryptionTypes encryption;
-            // This completely disables connections - encrypted connections are not allowed
-            // and unencrypted connections are not allowed
-            encryption = EncryptionTypes.None;
+            try
+            {
+                ZipFile.ExtractToDirectory(zip, "Games/" + dlGame._gameName);
+                dlGame._isInstalled = true;
+                dlGame._gameLocation = Environment.CurrentDirectory + "/Games/" + dlGame._gameName;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
 
-            // Only unencrypted connections are allowed
-            encryption = EncryptionTypes.PlainText;
-
-            // Allow only encrypted connections
-            encryption = EncryptionTypes.RC4Full | EncryptionTypes.RC4Header;
-
-            // Allow unencrypted and encrypted connections
-            encryption = EncryptionTypes.All;
-            encryption = EncryptionTypes.PlainText | EncryptionTypes.RC4Full | EncryptionTypes.RC4Header;
-
-            return encryption;
+        private void launchButton_Click(object sender, RoutedEventArgs e)
+        {
+            Game temp = (Game)gameListBox.SelectedItem;
+            Process process = new Process();
+            // Configure the process using the StartInfo properties.
+            process.StartInfo.FileName = temp._gameLocation + temp.relPathToExe;
+            process.StartInfo.WindowStyle = ProcessWindowStyle.Maximized;
+            process.Start();
+            process.WaitForExit();
         }
     }
 }

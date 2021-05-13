@@ -33,7 +33,24 @@ namespace GameificClient
             var dataGram = _receiver.Receive(ref srvEndPoint);
             string recvData = Encoding.UTF8.GetString(dataGram);
             List<Game> games = JsonConvert.DeserializeObject<List<Game>>(recvData);
-            Helpers.WriteToJsonFile("Game.json", games, false);
+            Helpers.WriteToJsonFile("Gametemp.json", games, false);
+
+            List<Game> templist = Helpers.ReadFromJsonFile<List<Game>>("Gametemp.json");
+            if (File.Exists("Game.json"))
+            {
+                List<Game> curlist = Helpers.ReadFromJsonFile<List<Game>>("Game.json");
+                foreach (Game g in curlist)
+                {
+                    if (g._isInstalled)
+                    {
+                        templist.Find(x => x._gameName == g._gameName)._gameLocation = g._gameLocation;
+                        templist.Find(x => x._gameName == g._gameName)._isInstalled = g._isInstalled;
+                    }
+                }
+                File.Delete("Gametemp.json");
+            }
+            Helpers.WriteToJsonFile("Game.json", templist, false);
+            
         }
 
         /// <summary>
