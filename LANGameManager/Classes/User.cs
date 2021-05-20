@@ -13,14 +13,21 @@ namespace GameificClient
     public class User
     {
         public string _username = "offline";
-        private string _token;
+        public string _token;
         private DateTime _tokenExp;
         private int _uid;
         private int _accType;
 
-        public User()
+        public User(string username = "", string password = "")
         {
-            
+            if (username != "")
+            {
+                _username = username;
+            }
+            if (password != "")
+            {
+                _token = password;
+            }
         }
 
         public bool logon(string username, string pw)

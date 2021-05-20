@@ -65,6 +65,8 @@ namespace LGMServer
                             if (loginToken == "INVALID")
                             {
                                 Console.WriteLine("Invalid login");
+                                byte[] invalid = Encoding.UTF8.GetBytes("INVALID");
+                                _sender.Send(invalid, invalid.Length, sentBy);
                             }
                             else if (loginToken == "CONNFAILED")
                             {
@@ -82,6 +84,50 @@ namespace LGMServer
                                 _sender.Send(userBytes, userBytes.Length, sentBy);
 
                             }
+                            break;
+                        case string a when a.Contains("GameificClientRegister"):
+                            string reg = a.Replace("GameificClientRegister", "");
+
+                            User newUser = JsonConvert.DeserializeObject<User>(reg);
+
+                            //check if user exists
+                            //if not, register and log in
+                            if (!checkUser(newUser._username))
+                            {
+                                if (addUser(newUser))
+                                {
+                                    loginToken = loginDb(newUser._username, newUser._token);
+                                    if (loginToken == "INVALID")
+                                    {
+                                        Console.WriteLine("Invalid login");
+                                        byte[] invalid = Encoding.UTF8.GetBytes("INVALID");
+                                        _sender.Send(invalid, invalid.Length, sentBy);
+                                    }
+                                    else if (loginToken == "CONNFAILED")
+                                    {
+                                        Console.WriteLine("Connection to User DB failed..");
+                                    }
+                                    else
+                                    {
+                                        //TODO: CHANGE THIS
+                                        User user = new User();
+                                        user._username = newUser._username;
+                                        user._token = loginToken;
+                                        user._uid = 1;
+                                        user._accType = 1;
+                                        byte[] userBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(user));
+                                        _sender.Send(userBytes, userBytes.Length, sentBy);
+
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("Username exists");
+                                byte[] userexists = Encoding.UTF8.GetBytes("Username exists");
+                                _sender.Send(userexists, userexists.Length, sentBy);
+                            }
+
                             break;
                         case "GameificClientReqGames":
                             Console.ForegroundColor = ConsoleColor.Green;
@@ -183,6 +229,51 @@ namespace LGMServer
             }
         }
 
+        static bool addUser(User user)
+        {
+            var dbCon = DBConnection.Instance();
+            dbCon.Server = "nzgamer41.win";
+            dbCon.DatabaseName = "gameific";
+            dbCon.UserName = "gameificserver";
+            dbCon.Password = "iRgBDEfVbTDI4ocs";
+            if (dbCon.IsConnect())
+            {
+                string query = "INSERT INTO `gameific` (`username`, `pass`, `token`, `expiry`, `uid`, `type`) VALUES ('"+ user._username +"', '"+ user._token +"', NULL, NULL, NULL, '1')";
+                var cmd = new MySqlCommand(query, dbCon.Connection);
+                var reader = cmd.ExecuteNonQuery();
+                if (reader > 0)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        static bool checkUser(string user)
+        {
+            var dbCon = DBConnection.Instance();
+            dbCon.Server = "nzgamer41.win";
+            dbCon.DatabaseName = "gameific";
+            dbCon.UserName = "gameificserver";
+            dbCon.Password = "iRgBDEfVbTDI4ocs";
+            if (dbCon.IsConnect())
+            {
+                string query = "SELECT username FROM gameific WHERE username='" + user + "'";
+                var cmd = new MySqlCommand(query, dbCon.Connection);
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    if (reader.GetString(0) == user)
+                    {
+                        reader.Close();
+                        return true;
+                    }
+                }
+                reader.Close();
+            }
+            return false;
+        }
+
         static string loginDb(string user, string hashpw, string token = "")
         {
             var dbCon = DBConnection.Instance();
@@ -234,6 +325,7 @@ namespace LGMServer
                 }
                 else
                 {
+                    reader.Close();
                     return "INVALID";
                 }
             }

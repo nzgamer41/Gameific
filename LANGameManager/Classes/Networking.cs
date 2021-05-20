@@ -86,10 +86,41 @@ namespace GameificClient
 
             //k1.Reset();
             //encStream.Dispose();
+            _receiver.Client.ReceiveTimeout = 5000;
             _receiver.Send(rv, rv.Length, srvEndPoint);
 
             var dataGram = _receiver.Receive(ref srvEndPoint);
-            return JsonConvert.DeserializeObject<User>(Encoding.UTF8.GetString(dataGram));
+            try
+            {
+                return JsonConvert.DeserializeObject<User>(Encoding.UTF8.GetString(dataGram));
+            }
+            catch
+            {
+                throw new Exception("Failed to log in!");
+            }
+        }
+
+        public static User register(User newUser, string serverIP)
+        {
+            _receiver = new UdpClient();
+            IPEndPoint srvEndPoint = new IPEndPoint(IPAddress.Parse(serverIP), _port);
+            var data = Encoding.UTF8.GetBytes("GameificClientRegister");
+            byte[] userData = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(newUser));
+            byte[] rv = new byte[data.Length + userData.Length];
+            Buffer.BlockCopy(data, 0, rv, 0, data.Length);
+            Buffer.BlockCopy(userData, 0, rv, data.Length, userData.Length);
+            _receiver.Client.ReceiveTimeout = 5000;
+            _receiver.Send(rv, rv.Length, srvEndPoint);
+
+            var dataGram = _receiver.Receive(ref srvEndPoint);
+            try
+            {
+                return JsonConvert.DeserializeObject<User>(Encoding.UTF8.GetString(dataGram));
+            }
+            catch
+            {
+                throw new Exception("Failed to Register!");
+            }
         }
 
         public static bool powerOn(string serverIP)

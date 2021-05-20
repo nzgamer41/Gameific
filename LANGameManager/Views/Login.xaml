@@ -29,7 +29,7 @@
         <PasswordBox x:Name="passwordBox" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="4" Width="228" Margin="0,1,0,0"/>
         <Button Content="Login" HorizontalAlignment="Left" Margin="0,16,0,15" Grid.Row="5" Width="228" Grid.Column="1" Height="Auto" Click="Button_Click"/>
         <Button Content="Cancel" Grid.Column="1" HorizontalAlignment="Left" Margin="0,12,0,12" Grid.Row="6" Width="228" Height="Auto" IsCancel="True" Click="Button_Click_1"/>
-        <Button Content="Register" Grid.Column="1" HorizontalAlignment="Left" Margin="0,9,0,9" Grid.Row="7" Width="228" Height="Auto" IsEnabled="False"/>
+        <Button x:Name="buttonRegister" Content="Register" Grid.Column="1" HorizontalAlignment="Left" Margin="0,9,0,9" Grid.Row="7" Width="228" Height="Auto" Click="buttonRegister_Click"/>
 
     </Grid>
 </Window>
