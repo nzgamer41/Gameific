@@ -264,6 +264,7 @@ namespace GameificClient
             Process process = new Process();
             // Configure the process using the StartInfo properties.
             process.StartInfo.FileName = temp._gameLocation + temp.relPathToExe;
+            process.StartInfo.WorkingDirectory = temp._gameLocation;
             process.StartInfo.WindowStyle = ProcessWindowStyle.Maximized;
             process.Start();
             process.WaitForExit();

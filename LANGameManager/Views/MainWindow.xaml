@@ -11,7 +11,7 @@
         FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
         xmlns:local="clr-namespace:GameificClient"
         mc:Ignorable="d"
-        Title="Gameific Client" MinHeight="620" MinWidth="500" MaxHeight="620" MaxWidth="500"  Height="620" Width="500">
+        Title="Millennium Technology LAN Client" MinHeight="620" MinWidth="500" MaxHeight="620" MaxWidth="500"  Height="620" Width="500">
     <Grid>
         <Button x:Name="launchButton" Content="Launch" HorizontalAlignment="Left" Margin="324,186,0,0" VerticalAlignment="Top" Width="158" Height="35" Click="launchButton_Click" />
         <Button x:Name="buttonConfig" Content="Configure" HorizontalAlignment="Left" Margin="324,226,0,0" VerticalAlignment="Top" Width="158" Height="35" Click="Button_Click"/>

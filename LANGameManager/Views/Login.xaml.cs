@@ -38,14 +38,23 @@ namespace GameificClient
         {
             try
             {
+                labelUser.Visibility = Visibility.Collapsed;
+                labelPw.Visibility = Visibility.Collapsed;
+                textBoxUser.Visibility = Visibility.Collapsed;
+                passwordBox.Visibility = Visibility.Collapsed;
+                buttonCancel.Visibility = Visibility.Collapsed;
+                buttonLogin.Visibility = Visibility.Collapsed;
+                buttonRegister.Visibility = Visibility.Collapsed;
+                pbLogin.Visibility = Visibility.Visible;
+                pbLogin.IsIndeterminate = true;
+
                 User temp = new User();
                 bool success = false;
-                await Task.Run(() =>
-                            this.Dispatcher.Invoke(() =>
-                            {
-                                success = temp.logon(textBoxUser.Text, passwordBox.Password);
-                            })
-                );
+                string un = textBoxUser.Text;
+                string pw = passwordBox.Password;
+                await Task.Run(() =>{
+                    success = temp.logon(un, pw);
+                });
                 if (success)
                 {
                     MainWindow mw = new MainWindow(temp);
@@ -54,6 +63,15 @@ namespace GameificClient
                 }
                 else
                 {
+                    labelUser.Visibility = Visibility.Visible;
+                    labelPw.Visibility = Visibility.Visible;
+                    textBoxUser.Visibility = Visibility.Visible;
+                    passwordBox.Visibility = Visibility.Visible;
+                    buttonCancel.Visibility = Visibility.Visible;
+                    buttonLogin.Visibility = Visibility.Visible;
+                    buttonRegister.Visibility = Visibility.Visible;
+                    pbLogin.Visibility = Visibility.Collapsed;
+                    pbLogin.IsIndeterminate = false;
                     MessageBox.Show("Failed to log in!");
                 }
 
@@ -71,19 +89,64 @@ namespace GameificClient
             this.Close();
         }
 
-        private void buttonRegister_Click(object sender, RoutedEventArgs e)
+        private async void buttonRegister_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 User newUser = new User(textBoxUser.Text, passwordBox.Password);
-                User temp = Networking.register(newUser, "127.0.0.1");
-                MainWindow mw = new MainWindow(temp);
-                mw.Show();
-                this.Close();
+                
+
+
+                labelUser.Visibility = Visibility.Collapsed;
+                labelPw.Visibility = Visibility.Collapsed;
+                textBoxUser.Visibility = Visibility.Collapsed;
+                passwordBox.Visibility = Visibility.Collapsed;
+                buttonCancel.Visibility = Visibility.Collapsed;
+                buttonLogin.Visibility = Visibility.Collapsed;
+                buttonRegister.Visibility = Visibility.Collapsed;
+                pbLogin.Visibility = Visibility.Visible;
+                pbLogin.IsIndeterminate = true;
+
+                User temp = new User();
+                bool success = false;
+                string un = textBoxUser.Text;
+                string pw = passwordBox.Password;
+                await Task.Run(() => {
+                    temp = Networking.register(newUser, "127.0.0.1");
+                    success = temp.logon(un, pw);
+                });
+                if (success)
+                {
+                    MainWindow mw = new MainWindow(temp);
+                    mw.Show();
+                    this.Close();
+                }
+                else
+                {
+                    labelUser.Visibility = Visibility.Visible;
+                    labelPw.Visibility = Visibility.Visible;
+                    textBoxUser.Visibility = Visibility.Visible;
+                    passwordBox.Visibility = Visibility.Visible;
+                    buttonCancel.Visibility = Visibility.Visible;
+                    buttonLogin.Visibility = Visibility.Visible;
+                    buttonRegister.Visibility = Visibility.Visible;
+                    pbLogin.Visibility = Visibility.Collapsed;
+                    pbLogin.IsIndeterminate = false;
+                    MessageBox.Show("Failed to register!");
+                }
             }
             catch
             {
-                Console.WriteLine("Failed to register user!");
+                labelUser.Visibility = Visibility.Visible;
+                labelPw.Visibility = Visibility.Visible;
+                textBoxUser.Visibility = Visibility.Visible;
+                passwordBox.Visibility = Visibility.Visible;
+                buttonCancel.Visibility = Visibility.Visible;
+                buttonLogin.Visibility = Visibility.Visible;
+                buttonRegister.Visibility = Visibility.Visible;
+                pbLogin.Visibility = Visibility.Collapsed;
+                pbLogin.IsIndeterminate = false;
+                MessageBox.Show("Failed to register user!");
             }
         }
     }

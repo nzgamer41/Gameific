@@ -11,6 +11,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Documents;
 using Newtonsoft.Json;
+using BCrypt.Net;
+
 
 namespace GameificClient
 {
@@ -26,7 +28,7 @@ namespace GameificClient
             _receiver = new UdpClient();
 
             IPEndPoint srvEndPoint = new IPEndPoint(IPAddress.Parse(serverIP), _port);
-            var data = Encoding.UTF8.GetBytes("GameificClientReqGames");
+            var data = Encoding.UTF8.GetBytes("MTClientReqGames");
             _receiver.Send(data, data.Length, srvEndPoint);
 
             IPEndPoint sentBy = new IPEndPoint(IPAddress.Any, _srvPort);
@@ -59,24 +61,9 @@ namespace GameificClient
         /// <returns></returns>
         public static User logOn(string username, string pw, string serverIP)
         {
-            //TODO: Proper hashing and salting
-            /*
-            //security commands FIRST
-            byte[] salt1 = Encoding.ASCII.GetBytes("VOMVF2YR5FTORZZOGD0Y");
-            Rfc2898DeriveBytes k1 = new Rfc2898DeriveBytes(pw, salt1, 1000);
-
-            Aes encAlg = Aes.Create();
-            encAlg.Key = k1.GetBytes(16);
-            MemoryStream encStream = new MemoryStream();
-            CryptoStream enc = new CryptoStream(encStream, encAlg.CreateEncryptor(), CryptoStreamMode.Write);
-            byte[] data1 = new UTF8Encoding(false).GetBytes(pw);
-            enc.Write(data1, 0, data1.Length);
-            enc.FlushFinalBlock();
-            enc.Close();
-            */
             _receiver = new UdpClient();
             IPEndPoint srvEndPoint = new IPEndPoint(IPAddress.Parse(serverIP), _port);
-            var data = Encoding.UTF8.GetBytes("GameificClientLogin");
+            var data = Encoding.UTF8.GetBytes("MTClientLogin");
             char[] separator = new[] { '|' };
             byte[] rv = new byte[data.Length + Encoding.UTF8.GetBytes(username).Length + Encoding.UTF8.GetBytes(pw).Length + separator.Length];
             System.Buffer.BlockCopy(data, 0, rv, 0, data.Length);
@@ -104,7 +91,7 @@ namespace GameificClient
         {
             _receiver = new UdpClient();
             IPEndPoint srvEndPoint = new IPEndPoint(IPAddress.Parse(serverIP), _port);
-            var data = Encoding.UTF8.GetBytes("GameificClientRegister");
+            var data = Encoding.UTF8.GetBytes("MTClientRegister");
             byte[] userData = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(newUser));
             byte[] rv = new byte[data.Length + userData.Length];
             Buffer.BlockCopy(data, 0, rv, 0, data.Length);
@@ -130,7 +117,7 @@ namespace GameificClient
                 _receiver = new UdpClient();
 
                 IPEndPoint srvEndPoint = new IPEndPoint(IPAddress.Parse(serverIP), _port);
-                var data = Encoding.UTF8.GetBytes("GameificClientPowerOn");
+                var data = Encoding.UTF8.GetBytes("MTClientPowerOn");
                 _receiver.Send(data, data.Length, srvEndPoint);
 
                 IPEndPoint sentBy = new IPEndPoint(IPAddress.Any, _srvPort);
